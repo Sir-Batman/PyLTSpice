@@ -157,7 +157,10 @@ class RunTask(threading.Thread):
         logger.setLevel(logging.INFO)
 
         # Running the Simulation
-        cmd_run = LTspice_exe + LTspice_arg.get('run', '') + [self.netlist_file] + cmdline_switches
+        if sys.platform == 'linux':
+            cmd_run = LTspice_exe + LTspice_arg.get('run', '') + [subprocess.check_output(['winepath', '-w', self.netlist_file])] + cmdline_switches
+        else:
+            cmd_run = LTspice_exe + LTspice_arg.get('run', '') + [self.netlist_file] + cmdline_switches
 
         # run the simulation
         self.start_time = clock_function()
