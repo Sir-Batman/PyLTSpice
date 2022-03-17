@@ -154,7 +154,7 @@ class RunTask(threading.Thread):
     def run(self):
         # Setting up
         logger = logging.getLogger("sim%d" % self.run_no)
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
 
         # Running the Simulation
         if sys.platform == 'linux':
@@ -162,13 +162,16 @@ class RunTask(threading.Thread):
         else:
             cmd_run = LTspice_exe + LTspice_arg.get('run', '') + [self.netlist_file] + cmdline_switches
 
+        logging.debug(f"Thread will run command {cmd_run}")
         # run the simulation
         self.start_time = clock_function()
         if self.verbose:
             print(time.asctime(), ": Starting simulation %d" % self.run_no)
 
         # start execution
+        logging.debug(f"Running cmd, timeout {self.timeout}")
         self.retcode = run_function(cmd_run, timeout=self.timeout)
+        logging.debug(f"Thread finished, returned code {self.retcode}")
 
         # print simulation time
         sim_time = time.strftime("%H:%M:%S", time.gmtime(clock_function() - self.start_time))
